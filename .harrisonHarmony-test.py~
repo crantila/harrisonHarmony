@@ -724,7 +724,9 @@ class TestPossibleFunctionsFromScaleDegree( unittest.TestCase ):
       else:
          for i in xrange(len(aaa)):
             if aaa[i][0].equal( zzz[i][0] ) and aaa[i][1].equal( zzz[i][1] ):
-               return True
+               for i in xrange(len(zzz)):
+                  if zzz[i][0].equal( aaa[i][0] ) and zzz[i][1].equal( aaa[i][1] ):
+                     return True
             else:
                return False
    
@@ -893,48 +895,69 @@ class TestPossibleFunctionsFromScaleDegree( unittest.TestCase ):
       ###   -the degree a third beself.low is present in the self.lowest voice or this degree is a third (V of something)
       ###   -the degrees a minor third above and a minor third above that are present (vii of something)
       ### also, it's an applied Agent, so it's pretty powerful... but we need some reason to believe it's not just a regular NHT
-      self.assertEqual( [CM,'#1',self.low], [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#1',self.mid], [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#1',self.hig], [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'#1'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#2',self.low], [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#2',self.mid], [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#2',self.hig], [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'#2'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#3',self.low], [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#3',self.mid], [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#3',self.hig], [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'#3'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#4',self.low], [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#4',self.mid], [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#4',self.hig], [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'#4'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#5',self.low], [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#5',self.mid], [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#5',self.hig], [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'#5'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#6',self.low], [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#6',self.mid], [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#6',self.hig], [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'#6'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#7',self.low], [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#7',self.mid], [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
-      self.assertEqual( [CM,'#7',self.hig], [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'5')],
-                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'#7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#1',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#1',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#1',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("D"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#2',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#2',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#2',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("E"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#3',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#3',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#3',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("F#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#4',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#4',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#4',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("G"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#5',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#5',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#5',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("A"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#6',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#6',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#6',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("B"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#7',self.low ), \
+                              [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#7',self.mid ), \
+                              [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
+      self.assertTrue( self.equalsMaker( possibleFunctionsFromScaleDegree( CM,'#7',self.hig ), \
+                              [[HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'5')],
+                              [HarmonicFunctionalNote(key.Key("C#"),self.D,self.age,'7'),ConditionForFunction(self.isPresent,'2'),ConditionForFunction(self.isPresent,'4')]] ) )
 #-------------------------------------------------------------------------------
 
 
@@ -965,7 +988,7 @@ if __name__ == '__main__':
    #unittest.TextTestRunner( verbosity = 2 ).run( relativeVoicePositionSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( conditionForFunctionSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalNoteSuite )
-   unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalChordSuite )
-   #unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
+   #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalChordSuite )
+   unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
    
    #unittest.main()
