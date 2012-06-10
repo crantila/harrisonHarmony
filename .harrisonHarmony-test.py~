@@ -965,7 +965,7 @@ if __name__ == '__main__':
    #unittest.TextTestRunner( verbosity = 2 ).run( relativeVoicePositionSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( conditionForFunctionSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalNoteSuite )
-   #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalChordSuite )
-   unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
+   unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalChordSuite )
+   #unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
    
    #unittest.main()
