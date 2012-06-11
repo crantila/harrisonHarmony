@@ -1132,79 +1132,80 @@ def labelThisChord( whatKey, harmony, verbosity = 'concise' ):
 
 
 
-##-------------------------------------------------------------------------------
-#def analyzeThis( pathname, verbosity = 'concise' ):
-   #'''
-   #Given the path to a music21-supported score, imports the score, performs a
-   #harmonic-functional analysis, annotates the score, and displays it with show().
+#-------------------------------------------------------------------------------
+def analyzeThis( pathname, verbosity = 'concise' ):
+   '''
+   Given the path to a music21-supported score, imports the score, performs a
+   harmonic-functional analysis, annotates the score, and displays it with show().
    
-   #The second argument is optional, and takes the form of a str that is either
-   #'concise' or 'verbose', which will be passed to `labelThisChord()`, to
-   #display either verbose or concise labels.
-   #'''
+   The second argument is optional, and takes the form of a str that is either
+   'concise' or 'verbose', which will be passed to `labelThisChord()`, to
+   display either verbose or concise labels.
+   '''
    
-   ## TODO: parallelization: we could do .chordify() and .getSolution() (for key-finding)
-   ## simultaneously, and (for as long as we're only doing 'vertical' analysis) we could
-   ## also analyze all the chords simultaneously.
+   # TODO: parallelization: we could do .chordify() and .getSolution() (for key-finding)
+   # simultaneously, and (for as long as we're only doing 'vertical' analysis) we could
+   # also analyze all the chords simultaneously.
    
-   #theScore = theChords = None
-   ## See what input we have...
-   #if isinstance( pathname, str ):
-      ### get the score
-      #print( "Importing score to music21." )
-      #theScore = converter.parse( pathname )
-      ### "chordify" the score
-      #print( "Chordifying the score." )
-      #theChords = theScore.chordify()
-   #elif isinstance( pathname, stream.Score ):
-      #theScore = pathname
-      ### "chordify" the score
-      #print( "Chordifying the score." )
-      #theChords = theScore.chordify()
-   #elif isinstance( pathname, stream.Part ):
-      #theChords = pathname
-   #else:
-      #raise InvalidInputError( "analyzeThis(): input must be str, Score, or Part; received " + str(type(pathname)) )
+   theScore = theChords = None
+   # See what input we have...
+   if isinstance( pathname, str ):
+      ## get the score
+      print( "Importing score to music21." )
+      theScore = converter.parse( pathname )
+      ## "chordify" the score
+      print( "Chordifying the score." )
+      theChords = theScore.chordify()
+   elif isinstance( pathname, stream.Score ):
+      theScore = pathname
+      ## "chordify" the score
+      print( "Chordifying the score." )
+      theChords = theScore.chordify()
+   elif isinstance( pathname, stream.Part ):
+      theChords = pathname
+   else:
+      raise InvalidInputError( "analyzeThis(): input must be str, Score, or Part; received " + str(type(pathname)) )
    
-   ### Remove ties because, if we're using the "lyric" property,
-   ### MusicXML-->LilyPond won't allow two annotations for chords with tied notes.
-   ### It doesn't hurt to do this, even if it's already been done.
-   #print( "Removing ties from the score." )
-   #for myMeasure in theChords:
-      #if isinstance( myMeasure, stream.Measure ):
-         #for event in myMeasure:
-            #if isinstance( event, chord.Chord ):
-               #for chordMember in event:
-                  #event.tie = None
-      #elif isinstance( myMeasure, chord.Chord ):
-         #for chordMember in myMeasure:
-            #event.tie = None
+   ## Remove ties because, if we're using the "lyric" property,
+   ## MusicXML-->LilyPond won't allow two annotations for chords with tied notes.
+   ## It doesn't hurt to do this, even if it's already been done.
+   print( "Removing ties from the score." )
+   for eachMeasure in theChords:
+      if isinstance( eachMeasure, stream.Measure ):
+         for event in eachMeasure:
+            if isinstance( event, chord.Chord ):
+               for chordMember in event:
+                  event.tie = None
+      elif isinstance( eachMeasure, chord.Chord ):
+         for chordMember in eachMeasure:
+            chordMember.tie = None
    
-   ### find the key
-   #anal = analysis.discrete.SimpleWeights()
-   #whatKey = anal.getSolution( theChords )
+   ## find the key
+   anal = analysis.discrete.SimpleWeights()
+   whatKey = anal.getSolution( theChords )
    
-   #print( "Parsing and labelling chords." )
-   ### parse and label the chords
-   #for measure in theChords:
-      #if isinstance( measure, chord.Chord ):
-               #measure.lyric = labelThisChord( whatKey, measure )
-      #elif isinstance( measure, stream.Measure ):
-         #for harmony in measure:
-            #if isinstance( harmony, chord.Chord ):
-               #harmony.lyric = labelThisChord( whatKey, harmony )
+   print( "Parsing and labelling chords." )
+   ## parse and label the chords
+   for measure in theChords:
+      if isinstance( measure, chord.Chord ):
+               measure.lyric = labelThisChord( whatKey, measure )
+      elif isinstance( measure, stream.Measure ):
+         for harmony in measure:
+            if isinstance( harmony, chord.Chord ):
+               harmony.lyric = labelThisChord( whatKey, harmony )
    
-   #print( "Processing score for display." )
-   #theChords.show()
-## End function analyzeThis() ---------------------------------------------------
+   print( "Processing score for display." )
+   theChords.show('lilypond')
+# End function analyzeThis() ---------------------------------------------------
 
 
 
 # "main" function --------------------------------------------------------------
 # TODO: this obviously needs some input-checking!
+# TODO: write the GPL-specified blurb here, and implemenet the commands, as specified at the end of the licence
 if __name__ == '__main__':
-   print( "mumt621 (aka \"harrisonHarmony\")" )
-   print( "=================================" )
+   print( "harrisonHarmony" )
+   print( "===============" )
    print( "Please input the path to the score you wish to analyze." )
    print( "Fair warning: input is not verified at all, so don't do anything stupid..." )
    path = raw_input( "Path: " )
