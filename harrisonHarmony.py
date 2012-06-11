@@ -1030,7 +1030,7 @@ def reconcilePossibleFunctions( functions ):
                   # if a condition depends on the bass voice
                   if ( ConditionForFunction.IsLowestVoice == possibility[1].getContingency() ):
                      # if the bass voice is that function
-                     if ( possibility[1].getDependency() == post[0] ):
+                     if ( possibility[1].getDependency().equal( post[0]  )):
                         # assign it
                         post[index] = possibility[0]
          # Do we still need to solve this index?

@@ -1235,9 +1235,15 @@ class TestReconcilePossibleFunctions( unittest.TestCase ):
       self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l2,self.m1,self.m3,self.h4] ), \
                 HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'), \
                 [HarmonicFunctionalNote(self.CM,self.T,self.bas,'1'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'4')] ) ) )
+      # ^4 | ^2 ^3 ^1 ==> S^T(4)
+      # Note the ^1 could be correctly analyzed as T-bas or S-ass
       self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l4,self.m2,self.m3,self.h1] ), \
                HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.bas,'4'), \
-               [HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.T,self.bas,'1')] ) ) )
+               [HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.T,self.bas,'1')] ) )
+               or \
+               self.equalsMaker( reconcilePossibleFunctions( [self.l4,self.m2,self.m3,self.h1] ), \
+               HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.bas,'4'), \
+               [HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.S,self.ass,'1')] ) ) )
       self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l2,self.m1,self.h5] ), \
                HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'), \
                [HarmonicFunctionalNote(self.CM,self.U,self.unk,'1'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'5')] ) ) ) # all associates non-functional
