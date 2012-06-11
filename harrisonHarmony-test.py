@@ -1,13 +1,12 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 #-------------------------------------------------------------------------------
-# Name:         harrisonHarmony.py
-# Purpose:      music21-compatible classes for performing and presenting an
-#               analysis in the style of Daniel Harrison (1994)
+# Name:         harrisonHarmony-test.py
+# Purpose:      Unit tests for harrisonHarmony.py
 #
 # Authors:      Christopher Antila
 #
-# Copyright:    (c) 2012 The music21 Project
+# Copyright:    (c) 2012 Christopher Antila
 # License:      GPL v 3.0
 #-------------------------------------------------------------------------------
 
