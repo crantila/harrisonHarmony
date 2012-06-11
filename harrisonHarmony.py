@@ -40,8 +40,6 @@ from music21 import note # confirmed requirement
 ## class HarmonicFunctionalNote( object ):
 ## ........ for example
 
-# TODO: use the underscore-name for "private" variables and methods
-
 ## Reference for documentation:
 
 # define order to present names in documentation; use strings
@@ -349,8 +347,6 @@ class ConditionForFunction( object ):
    def __init__( self, condition, harFuncNote ):
       '''
       Instantiate a condition.
-      
-      TODO: Make sure these tests are correct.
       
       >>> from harrisonHarmony import *
       >>> from music21 import key
