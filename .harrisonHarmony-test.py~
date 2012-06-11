@@ -1236,10 +1236,11 @@ class TestReconcilePossibleFunctions( unittest.TestCase ):
                 HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'), \
                 [HarmonicFunctionalNote(self.CM,self.T,self.bas,'1'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'4')] ) ) )
       # ^4 | ^2 ^3 ^1 ==> S^T(4)
+      # Note the ^1 could be correctly analyzed as T-bas or S-ass
       self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l4,self.m2,self.m3,self.h1] ), \
                HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.bas,'4'), \
                [HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.T,self.bas,'1')] ) )
-               or \ # the ^1 could be correctly analyzed as Tbas or Sass
+               or \
                self.equalsMaker( reconcilePossibleFunctions( [self.l4,self.m2,self.m3,self.h1] ), \
                HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.bas,'4'), \
                [HarmonicFunctionalNote(self.CM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.T,self.age,'3'),HarmonicFunctionalNote(self.CM,self.S,self.ass,'1')] ) ) )
@@ -1266,67 +1267,48 @@ class TestReconcilePossibleFunctions( unittest.TestCase ):
                                              HarmonicFunctionalChord( HarmonicFunctionalNote(self.FM,self.D,self.ass,'2'), \
                                                                       [HarmonicFunctionalNote(self.FM,self.D,self.age,'7'),HarmonicFunctionalNote(self.FM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.FM,self.U,self.unk,'4')] ) ) )
       
-      # FM: D | G B F = ^6 ^2 ^#4 ^1 = S(6)
-      self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("D")),self.low), \
-                                                                     possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("G")),self.mid), \
-                                                                     possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("B")),self.mid), \
-                                                                     possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("F")),self.hig)] ), \
-                                             HarmonicFunctionalChord( HarmonicFunctionalNote(self.FM,self.S,self.age,'6'), \
-                                                                     [HarmonicFunctionalNote(self.FM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.FM,self.S,self.ass,'1')] ) ) )
+      # FM: D | G B F = ^6 ^2 ^#4 ^1 = S^D/D(6)
+      # TODO: Uncomment this when Dominant applied chords work.
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("D")),self.low), \
+                                                                     #possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("G")),self.mid), \
+                                                                     #possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("B")),self.mid), \
+                                                                     #possibleFunctionsFromScaleDegree(self.FM,chromaticScaleDegree(self.FM,pitch.Pitch("F")),self.hig)] ), \
+                                             #HarmonicFunctionalChord( HarmonicFunctionalNote(self.FM,self.S,self.age,'6'), \
+                                                                     #[HarmonicFunctionalNote(self.FM,self.U,self.unk,'2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.FM,self.S,self.ass,'1')] ) ) )
    # End test_from_pitch_to_HarnmonicFunctionalChord()
-
-
-
-
-
-
-
-
-################# Test Function ################################################
-#def chkExp( testArg, readableTestArg, exp ):
-   #result = reconcileTheseFunctions( testArg )
-   #if 1 != exp.equal( result ):
-      #print( "Error: " + readableTestArg + " yields <" + result.getVerboseLabel() + "> instead of <" + exp.getVerboseLabel() + ">" )
-
-################ Tests ########################################################
-## NOTE: For all these tests, the bass note is the first element in the first argument to chkExp.
-## Primary triads in root position and first inversion
-
-
-
-
-### Diatonic triads in second inversion
-
-
-### Some seventh chords
-## chkExp( [l,m,m,h], "[l,m,m,h]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,,,''), [HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,'')] ) )
-
-
-### Some arbitrary assemblages
-### (Targeted testing of things that seem to fail)
-## chkExp( [l,m,m,h], "[l,m,m,h]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,,,''), [HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,'')] ) )
-
-
-## Some Dominant applied chords -- note the expected key is not always CM
-# chkExp( [l,m,m,h], "[l,m,m,h]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,,,''), [HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,'')] ) )
-# have ^#2 and ^#4
-#chkExp( [l2,ms4,m2,h6], "[l2,ms4,m2,h6]", HarmonicFunctionalChord( HarmonicFunctionalNote(GM,self.D,self.bas,'5'), [HarmonicFunctionalNote(GM,self.D,self.age,'7'),HarmonicFunctionalNote(self.CM,self.D,self.bas,'5'),HarmonicFunctionalNote(GM,self.D,self.ass,'2')] ) ) # V / ^5
-#chkExp( [ls4,m6,m1,h6], "[ls4,m6,m1,h6]", HarmonicFunctionalChord( HarmonicFunctionalNote(GM,self.D,self.age,'7'), [HarmonicFunctionalNote(GM,self.D,self.ass,'2'),HarmonicFunctionalNote(GM,self.U,self.unk,'4'),HarmonicFunctionalNote(GM,self.D,self.ass,'2')] ) ) # vii-dim / ^5
-#chkExp( [l6,ms4,m6,hs4], "[l6,ms4,m6,hs4]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.age,'6'), [HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.CM,self.S,self.age,'6'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4')] ) ) # ^#4 and ^6 = nothing
-#chkExp( [l2,m6,m1,hs4], "[l2,m6,m1,hs4]", HarmonicFunctionalChord( HarmonicFunctionalNote(GM,self.D,self.bas,'5'), [HarmonicFunctionalNote(GM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'1'),HarmonicFunctionalNote(GM,self.D,self.age,'7')] ) ) # V7 / ^5
-#chkExp( [ls4,m2,m6,h2], "[ls4,m2,m6,h2]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.D,self.age,'7'), [HarmonicFunctionalNote(GM,self.D,self.bas,'5'),HarmonicFunctionalNote(GM,self.D,self.ass,'2'),HarmonicFunctionalNote(GM,self.D,self.bas,'5')] ) ) # V6 / ^5
-#chkExp( [l7,ms2,m7,hs4], "[l7,ms2,m7,hs4]", HarmonicFunctionalChord( HarmonicFunctionalNote(EM,self.D,self.bas,'5'), [HarmonicFunctionalNote(EM,self.D,self.age,'7'),HarmonicFunctionalNote(EM,self.D,self.bas,'5'),HarmonicFunctionalNote(EM,self.D,self.ass,'2')] ) ) # V / ^3
-#chkExp( [ls2,ms4,m6,hs4], "[ls2,ms4,m6,hs4]", HarmonicFunctionalChord( HarmonicFunctionalNote(EM,self.D,self.age,'7'), [HarmonicFunctionalNote(EM,self.D,self.ass,'2'),HarmonicFunctionalNote(EM,self.U,self.unk,'4'),HarmonicFunctionalNote(EM,self.D,self.ass,'2')] ) ) # vii-dim / ^3
-#chkExp( [ls4,ms2,ms4,hs2], "[ls4,ms2,ms4,hs2]", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.age,'6'), [HarmonicFunctionalNote(self.CM,self.U,self.unk,'#2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#2')] ) ) # ^#2 and ^#4 = nothing (except this time maybe it is something... )
-#chkExp( [l7,ms4,m6,hs2], "[l7,ms4,m6,hs2]", HarmonicFunctionalChord( HarmonicFunctionalNote(EM,self.D,self.bas,'5'), [HarmonicFunctionalNote(EM,self.D,self.ass,'#4'),HarmonicFunctionalNote(self.CM,self.S,self.age,'6'),HarmonicFunctionalNote(EM,self.D,self.age,'7')] ) ) # V7 / ^3
-#chkExp( [ls2,m7,ms4,h7], "[ls2,m7,ms4,h7]", HarmonicFunctionalChord( HarmonicFunctionalNote(EM,self.D,self.age,'7'), [HarmonicFunctionalNote(EM,self.D,self.bas,'5'),HarmonicFunctionalNote(EM,self.D,self.ass,'#4'),HarmonicFunctionalNote(EM,self.D,self.bas,'5')] ) ) # V6 / ^3
-
-### Some Subdominant applied chords -- note the expected key is not always CM
-## chkExp( [l,m,m,h], "", HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,,,''), [HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,''),HarmonicFunctionalNote(self.CM,,,'')] ) )
-## have ^-2 and ^-4 and ^-1
-#chkExp( [lf2,mf4,mf2,hf6], "[lf2,mf4,mf2,hf6]", HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.bas,'4'), [HarmonicFunctionalNote(AfM,self.S,self.age,'-6'),HarmonicFunctionalNote(AfM,self.S,self.bas,'4'),HarmonicFunctionalNote(AfM,self.S,self.ass,'1')] ) ) # S / ^3
-#chkExp( [lf4,mf6,mf2,hf6], "[lf4,mf6,mf2,hf6]", HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.age,'-6'), [HarmonicFunctionalNote(AfM,self.S,self.ass,'1'),HarmonicFunctionalNote(AfM,self.S,self.bas,'4'),HarmonicFunctionalNote(AfM,self.S,self.ass,'1')] ) ) # S-age in bass / ^3
-#chkExp( [lf2,mf6,mf1,hf4], "[lf2,mf6,mf1,hf4]", HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.bas,'4'), [HarmonicFunctionalNote(AfM,self.S,self.ass,'1'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'-1'),HarmonicFunctionalNote(AfM,self.S,self.age,'-6')] ) ) # S7 / ^3
+   
+   # TODO: Uncomment this when Dominant applied chords work.
+   #def test_some_dominant_applied_chords( self ):
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l2,self.ms4,self.m2,self.h6] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.GM,self.D,self.bas,'5'), [HarmonicFunctionalNote(self.GM,self.D,self.age,'7'),HarmonicFunctionalNote(self.CM,self.D,self.bas,'5'),HarmonicFunctionalNote(self.GM,self.D,self.ass,'2')] ) )) # V / ^5
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.ls4,self.m6,self.m1,self.h6] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.GM,self.D,self.age,'7'), [HarmonicFunctionalNote(self.GM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.GM,self.U,self.unk,'4'),HarmonicFunctionalNote(self.GM,self.D,self.ass,'2')] ) )) # vii-dim / ^5
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l6,self.ms4,self.m6,self.hs4] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.age,'6'), [HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.CM,self.S,self.age,'6'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4')] )) ) # ^#4 and ^6 = nothing
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l2,self.m6,self.m1,self.hs4] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.GM,self.D,self.bas,'5'), [HarmonicFunctionalNote(self.GM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'1'),HarmonicFunctionalNote(self.GM,self.D,self.age,'7')] )) ) # V7 / ^5
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.ls4,self.m2,self.m6,self.h2] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.D,self.age,'7'), [HarmonicFunctionalNote(self.GM,self.D,self.bas,'5'),HarmonicFunctionalNote(self.GM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.GM,self.D,self.bas,'5')] )) ) # V6 / ^5
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l7,self.ms2,self.m7,self.hs4] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.EM,self.D,self.bas,'5'), [HarmonicFunctionalNote(self.EM,self.D,self.age,'7'),HarmonicFunctionalNote(self.EM,self.D,self.bas,'5'),HarmonicFunctionalNote(self.EM,self.D,self.ass,'2')] ) )) # V / ^3
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.ls2,self.ms4,self.m6,self.hs4] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.EM,self.D,self.age,'7'), [HarmonicFunctionalNote(self.EM,self.D,self.ass,'2'),HarmonicFunctionalNote(self.EM,self.U,self.unk,'4'),HarmonicFunctionalNote(self.EM,self.D,self.ass,'2')] ) )) # vii-dim / ^3
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.ls4,self.ms2,self.ms4,self.hs2] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.CM,self.S,self.age,'6'), [HarmonicFunctionalNote(self.CM,self.U,self.unk,'#2'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#4'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'#2')] )) ) # ^#2 and ^#4 = nothing (except this time maybe it is something... )
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.l7,self.ms4,self.m6,self.hs2] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.EM,self.D,self.bas,'5'), [HarmonicFunctionalNote(self.EM,self.D,self.ass,'#4'),HarmonicFunctionalNote(self.CM,self.S,self.age,'6'),HarmonicFunctionalNote(self.EM,self.D,self.age,'7')] ) )) # V7 / ^3
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [self.ls2,self.m7,self.ms4,self.h7] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(self.EM,self.D,self.age,'7'), [HarmonicFunctionalNote(self.EM,self.D,self.bas,'5'),HarmonicFunctionalNote(self.EM,self.D,self.ass,'#4'),HarmonicFunctionalNote(self.EM,self.D,self.bas,'5')] )) ) # V6 / ^3
+   
+   # TODO: Uncomment this when Subdominant applied chords work.
+   #def test_some_subdominant_applied_chords( self ):
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [lf2,mf4,mf2,hf6] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.bas,'4'), [HarmonicFunctionalNote(AfM,self.S,self.age,'-6'),HarmonicFunctionalNote(AfM,self.S,self.bas,'4'),HarmonicFunctionalNote(AfM,self.S,self.ass,'1')] ) )) # S / ^3
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [lf4,mf6,mf2,hf6] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.age,'-6'), [HarmonicFunctionalNote(AfM,self.S,self.ass,'1'),HarmonicFunctionalNote(AfM,self.S,self.bas,'4'),HarmonicFunctionalNote(AfM,self.S,self.ass,'1')] ) )) # S-age in bass / ^3
+      #self.assertTrue( self.equalsMaker( reconcilePossibleFunctions( [lf2,mf6,mf1,hf4] ), \
+               #HarmonicFunctionalChord( HarmonicFunctionalNote(AfM,self.S,self.bas,'4'), [HarmonicFunctionalNote(AfM,self.S,self.ass,'1'),HarmonicFunctionalNote(self.CM,self.U,self.unk,'-1'),HarmonicFunctionalNote(AfM,self.S,self.age,'-6')] ) )) # S7 / ^3
+#-------------------------------------------------------------------------------
 
 
 

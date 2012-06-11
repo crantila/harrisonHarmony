@@ -575,6 +575,9 @@ class HarmonicFunctionalNote( object ):
       >>> a.equal( b )
       True
       '''
+      if not isinstance( other, HarmonicFunctionalNote ):
+         raise ValueError( "dumbass error, got a " + other )
+      
       if self._key.tonic.name.upper() == other._key.tonic.name.upper() \
       and self._function == other._function \
       and self._role == other._role \
@@ -944,8 +947,9 @@ def possibleFunctionsFromScaleDegree( theKey, scaleDegree, position ):
       ## finds the applied key--probably a more efficient way to do this one!
       appliedKey = key.Key( pitch.Pitch( theKey.getPitches()[int(scaleDegree[1])-1].name ).transpose( 'M2' ).name )
       ## adds the relevant stuff
-      post.append( [HarmonicFunctionalNote( appliedKey, HarmonicFunction.Dominant, FunctionalRole.Agent, '7' ), ConditionForFunction( ConditionForFunction.IsPresent, '5' )] )
-      post.append( [HarmonicFunctionalNote( appliedKey, HarmonicFunction.Dominant, FunctionalRole.Agent, '7' ), ConditionForFunction( ConditionForFunction.IsPresent, '2' ), ConditionForFunction( ConditionForFunction.IsPresent, '4' )] )
+      post.append( [HarmonicFunctionalNote( appliedKey, HarmonicFunction.Dominant, FunctionalRole.Agent, '7' ), ConditionForFunction( ConditionForFunction.IsPresent, HarmonicFunctionalNote(appliedKey, HarmonicFunction.Dominant, FunctionalRole.Base, '5' ) )] )
+      post.append( [HarmonicFunctionalNote( appliedKey, HarmonicFunction.Dominant, FunctionalRole.Agent, '7' ), ConditionForFunction( ConditionForFunction.IsPresent, HarmonicFunctionalNote(appliedKey, HarmonicFunction.Dominant, FunctionalRole.Associate, '2' ) ), \
+                     ConditionForFunction( ConditionForFunction.IsPresent, HarmonicFunctionalNote(appliedKey, HarmonicFunction.Unknown, FunctionalRole.Unknown, '4') )] )
    
    return post
 # End function possibleFunctionsFromScaleDegree() ------------------------------
