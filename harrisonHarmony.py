@@ -1195,7 +1195,7 @@ def analyzeThis( pathname, verbosity = 'concise' ):
                harmony.lyric = labelThisChord( whatKey, harmony )
    
    print( "Processing score for display." )
-   theChords.show('lilypond')
+   theChords.show()
 # End function analyzeThis() ---------------------------------------------------
 
 
