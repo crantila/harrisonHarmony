@@ -1405,7 +1405,43 @@ class TestLabelThisChord( unittest.TestCase ):
       self.assertEqual( labelThisChord( self.FM, [self.pF,self.pB,self.pG,self.pbD] ), "S(6)" )
 #-------------------------------------------------------------------------------
 
+#-------------------------------------------------------------------------------
+class TestSettings( unittest.TestCase ):
+   def setUp( self ):
+      self.s = HarrisonHarmonySettings()
+   
+   def test_default_init( self ):
+      # Ensure all the settings are initialized to the proper default value.
+      self.assertEqual( self.s._chordLabelVerbosity, 'concise' )
+   
+   def test_set_some_things( self ):
+      # Setting something to a new, valid value is done properly.
+      self.s.parsePropertySet( 'set chordLabelVerbosity verbose' )
+      self.assertEqual( self.s._chordLabelVerbosity, 'verbose' )
+      self.s.parsePropertySet( 'chordLabelVerbosity concise' )
+      self.assertEqual( self.s._chordLabelVerbosity, 'concise' )
+   
+   def test_get_some_things( self ):
+      # Setting something to a new, valid value is done properly.
+      self.assertEqual( self.s.parsePropertyGet( 'chordLabelVerbosity' ), 'concise' )
+      self.s._chordLabelVerbosity = 'verbose'
+      self.assertEqual( self.s.parsePropertyGet( 'chordLabelVerbosity' ), 'verbose' )
+   
+   def test_get_invalid_setting( self ):
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertyGet, 'four score and five score' )
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertyGet, 'four' )
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertyGet, '' )
+   
+   def test_set_invalid_setting( self ):
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertySet, 'four score and five score' )
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertySet, 'fourscoreandfivescore' )
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertySet, '' )
+   
+   def test_set_to_invalid_value( self ):
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertySet, 'set chordLabelVerbosity five score' )
+      self.assertRaises( NonsensicalInputError, self.s.parsePropertySet, 'chordLabelVerbosity five score' )
 
+#-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
 # "Main" Function
@@ -1426,6 +1462,7 @@ if __name__ == '__main__':
    possibleFunctionsFromScaleDegreeSuite = unittest.TestLoader().loadTestsFromTestCase( TestPossibleFunctionsFromScaleDegree )
    reconcilePossibleFunctionsSuite = unittest.TestLoader().loadTestsFromTestCase( TestReconcilePossibleFunctions )
    labelThisChordSuite = unittest.TestLoader().loadTestsFromTestCase( TestLabelThisChord )
+   settingsSuite = unittest.TestLoader().loadTestsFromTestCase( TestSettings )
    
    # run test suites
    #unittest.TextTestRunner( verbosity = 2 ).run( chromaticScaleDegreeSuite )
@@ -1435,8 +1472,9 @@ if __name__ == '__main__':
    #unittest.TextTestRunner( verbosity = 2 ).run( conditionForFunctionSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalNoteSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( harmonicFunctionalChordSuite )
-   unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
+   #unittest.TextTestRunner( verbosity = 2 ).run( possibleFunctionsFromScaleDegreeSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( reconcilePossibleFunctionsSuite )
    #unittest.TextTestRunner( verbosity = 2 ).run( labelThisChordSuite )
+   unittest.TextTestRunner( verbosity = 2 ).run( settingsSuite )
    
    #unittest.main()

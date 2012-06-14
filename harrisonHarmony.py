@@ -1214,6 +1214,9 @@ class HarrisonHarmonySettings:
    # 
    # _chordLabelVerbosity = 'concise' or 'verbose' that will be given to
    #        labelThisChord()
+   # 
+   # NOTE: When you add a property, remember to test its default setting in
+   # the unit test file.
    def __init__( self, chordLabelVerbosity='concise' ):
       self._chordLabelVerbosity = chordLabelVerbosity
    
@@ -1239,10 +1242,13 @@ class HarrisonHarmonySettings:
       
       # now match the property
       if 'chordLabelVerbosity' == propertyStr[:spaceIndex]:
-         self._chordLabelVerbosity = propertyStr[spaceIndex+1:]
+         if 'verbose' == propertyStr[spaceIndex+1:] or 'concise' == propertyStr[spaceIndex+1:]:
+            self._chordLabelVerbosity = propertyStr[spaceIndex+1:]
+         else: # invalid setting
+            raise NonsensicalInputError( "Invalid value for 'chordLabelVerbosity': " + propertyStr[spaceIndex+1:] )
       # unrecognized property
       else:
-         pass #panic
+         raise NonsensicalInputError( "Unrecognized property: " + propertyStr )
    
    def parsePropertyGet( self, propertyStr ):
       # Parses 'propertyStr' and returns the value of the specified property.
@@ -1263,7 +1269,7 @@ class HarrisonHarmonySettings:
          return self._chordLabelVerbosity
       # unrecognized property
       else:
-         pass #panic
+         raise NonsensicalInputError( "Unrecognized property: " + propertyStr )
 # End Class: HarrisonHarmonySettings ------------------------------------------
 
 
