@@ -1364,6 +1364,11 @@ class TestLabelThisChord( unittest.TestCase ):
       self.pbA = pitch.Pitch( "A3" )
       self.pbB = pitch.Pitch( "B3" )
    
+   def test_incorrect_verbosity_argument( self ):
+      self.assertRaises( NonsensicalInputError, labelThisChord, self.CM, self.cC([self.pG,self.pE,self.pbC]), 'asdf' )
+      self.assertRaises( NonsensicalInputError, labelThisChord, self.CM, self.cC([self.pG,self.pE,self.pbC]), '' )
+      self.assertRaises( NonsensicalInputError, labelThisChord, self.CM, self.cC([self.pG,self.pE,self.pbC]), 'asdf wjkl eljaekwj ejlajew   ajaw ' )
+   
    def test_with_all_Pitches( self ):
       self.assertEqual( labelThisChord( self.CM, self.cC([self.pG,self.pE,self.pbC]) ), "T(1)" )
       self.assertEqual( labelThisChord( self.CM, self.cC([self.pC,self.pA,self.pbF]) ), "S(4)" )
@@ -1413,6 +1418,7 @@ class TestSettings( unittest.TestCase ):
    def test_default_init( self ):
       # Ensure all the settings are initialized to the proper default value.
       self.assertEqual( self.s._chordLabelVerbosity, 'concise' )
+      self.assertEqual( self.s._annotateChordifiedScore, False )
    
    def test_set_some_things( self ):
       # Setting something to a new, valid value is done properly.
@@ -1420,6 +1426,15 @@ class TestSettings( unittest.TestCase ):
       self.assertEqual( self.s._chordLabelVerbosity, 'verbose' )
       self.s.parsePropertySet( 'chordLabelVerbosity concise' )
       self.assertEqual( self.s._chordLabelVerbosity, 'concise' )
+      #
+      self.s.parsePropertySet( 'annotateChordifiedScore True' )
+      self.assertEqual( self.s._annotateChordifiedScore, True )
+      self.s.parsePropertySet( 'annotateChordifiedScore False' )
+      self.assertEqual( self.s._annotateChordifiedScore, False )
+      self.s.parsePropertySet( 'annotateChordifiedScore true' )
+      self.assertEqual( self.s._annotateChordifiedScore, True )
+      self.s.parsePropertySet( 'annotateChordifiedScore false' )
+      self.assertEqual( self.s._annotateChordifiedScore, False )
    
    def test_get_some_things( self ):
       # Setting something to a new, valid value is done properly.

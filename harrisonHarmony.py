@@ -1130,20 +1130,18 @@ def labelThisChord( whatKey, harmony, verbosity = 'concise' ):
    elif 'verbose' == verbosity:
       return reconcilePossibleFunctions( listOfHarmonicFunctionalNotes ).getVerboseLabel()
    else:
-      pass # TODO: throw a NonsensicalInputError
+      raise NonsensicalInputError( "labelThisChord(): third argument must be 'verbose' or 'concise' but I got '" + verbosity + "'" )
 # End function labelThisChord() ------------------------------------------------
 
 
 
 #-------------------------------------------------------------------------------
-def analyzeThis( pathname, verbosity = 'concise' ):
+def analyzeThis( pathname, theSettings ):
    '''
    Given the path to a music21-supported score, imports the score, performs a
    harmonic-functional analysis, annotates the score, and displays it with show().
    
-   The second argument is optional, and takes the form of a str that is either
-   'concise' or 'verbose', which will be passed to `labelThisChord()`, to
-   display either verbose or concise labels.
+   The second argument is a HarrisonHarmonySettings object.
    '''
    
    # TODO: parallelization: we could do .chordify() and .getSolution() (for key-finding)
@@ -1193,17 +1191,57 @@ def analyzeThis( pathname, verbosity = 'concise' ):
    whatKey = anal.getSolution( theChords )
    
    print( "Parsing and labelling chords." )
-   ## parse and label the chords
+   # find the index of the bass part
+   foundBassPart = False
+   tryThisIndex = len(theScore) - 1
+   indexOfBassPart = -1
+   while False == foundBassPart:
+      if -1 == tryThisIndex:
+         foundBassPart = True
+      elif isinstance( theScore[tryThisIndex], stream.Part ):
+         foundBassPart = True
+         indexOfBassPart = tryThisIndex
+      else:
+         tryThisIndex -= 1
+   
+   # Parse and label the chords.
    for measure in theChords:
       if isinstance( measure, chord.Chord ):
-               measure.lyric = labelThisChord( whatKey, measure )
+         # find the label
+         theLabel = labelThisChord( whatKey, measure, theSettings.parsePropertyGet( 'chordLabelVerbosity' ) )
+         # if needed, put label on the actual score
+         if False == theSettings.parsePropertyGet( 'annotateChordifiedScore' ):
+            measureNumber = theChords.number
+            offsetOfChord = measure.offset
+            try:
+               theScore[indexOfBassPart].measure( measureNumber ).getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+            except stream.StreamException as e:
+               print( "analyzeThis(): Couldn't annotate m." + str(measureNumber) + ", offset " + str(offsetOfChord) )
+         else: # otherwise label goes on the chordified score
+            measure.lyric = theLabel
       elif isinstance( measure, stream.Measure ):
          for harmony in measure:
             if isinstance( harmony, chord.Chord ):
-               harmony.lyric = labelThisChord( whatKey, harmony )
+               # find the label
+               theLabel = labelThisChord( whatKey, harmony, theSettings.parsePropertyGet( 'chordLabelVerbosity' ) )
+               # if needed, put label on the actual score
+               if False == theSettings.parsePropertyGet( 'annotateChordifiedScore' ):
+                  measureNumber = measure.number
+                  offsetOfChord = harmony.offset
+                  try:
+                     theScore[indexOfBassPart].measure( measureNumber ).getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+                  except stream.StreamException as e:
+                     print( "analyzeThis(): Couldn't annotate m." + str(measureNumber) + ", offset " + str(offsetOfChord) )
+               else: # otherwise label goes on the chordified score
+                  harmony.lyric = theLabel
+   #
    
    print( "Processing score for display." )
-   theChords.show()
+   # output the score!
+   if False == theSettings.parsePropertyGet( 'annotateChordifiedScore' ):
+      theScore.show()
+   else:
+      theChords.show()
 # End function analyzeThis() ---------------------------------------------------
 
 
@@ -1217,8 +1255,9 @@ class HarrisonHarmonySettings:
    # 
    # NOTE: When you add a property, remember to test its default setting in
    # the unit test file.
-   def __init__( self, chordLabelVerbosity='concise' ):
-      self._chordLabelVerbosity = chordLabelVerbosity
+   def __init__( self ):
+      self._chordLabelVerbosity = 'concise'
+      self._annotateChordifiedScore = False
    
    def parsePropertySet( self, propertyStr ):
       # Parses 'propertyStr' and sets the specified property to the specified
@@ -1246,6 +1285,13 @@ class HarrisonHarmonySettings:
             self._chordLabelVerbosity = propertyStr[spaceIndex+1:]
          else: # invalid setting
             raise NonsensicalInputError( "Invalid value for 'chordLabelVerbosity': " + propertyStr[spaceIndex+1:] )
+      elif 'annotateChordifiedScore' == propertyStr[:spaceIndex]:
+         if 'True' == propertyStr[spaceIndex+1:] or 'true' == propertyStr[spaceIndex+1:]:
+            self._annotateChordifiedScore = True
+         elif 'False' == propertyStr[spaceIndex+1:] or 'false' == propertyStr[spaceIndex+1:]:
+            self._annotateChordifiedScore = False
+         else: # invalid setting
+            raise NonsensicalInputError( "Invalid value for 'chordLabelVerbosity': " + propertyStr[spaceIndex+1:] )
       # unrecognized property
       else:
          raise NonsensicalInputError( "Unrecognized property: " + propertyStr )
@@ -1267,6 +1313,8 @@ class HarrisonHarmonySettings:
       # now match the property
       if 'chordLabelVerbosity' == propertyStr:
          return self._chordLabelVerbosity
+      elif 'annotateChordifiedScore' == propertyStr:
+         return self._annotateChordifiedScore
       # unrecognized property
       else:
          raise NonsensicalInputError( "Unrecognized property: " + propertyStr )
@@ -1303,20 +1351,26 @@ if __name__ == '__main__':
       elif 0 < userSays.find(' '):
          if 'set' == userSays[:userSays.find(' ')]:
             if 'set help' == userSays:
-               pass # print set help
+               pass # TODO: print set help
             else:
-               mySettings.parsePropertySet( userSays )
+               try:
+                  mySettings.parsePropertySet( userSays )
+               except NonsensicalInputError as e:
+                  print( "Error: " + str(e) )
          elif 'get' == userSays[:userSays.find(' ')]:
             if 'get help' == userSays:
-               pass # print get help
+               pass # TODO: print get help
             else:
-               val = mySettings.parsePropertyGet( userSays )
-               print( val )
+               try:
+                  val = mySettings.parsePropertyGet( userSays )
+                  print( val )
+               except NonsensiclaInputError as e:
+                  print( "Error: " + str(e) )
       else:
          if pathExists( userSays ):
             print( "Loading " + userSays + " for analysis." )
             try:
-               analyzeThis( userSays )
+               analyzeThis( userSays, mySettings )
             except ConverterException as e:
                print( "--> musc21 Error: " + str(e) )
             except ConverterFileException as e:
