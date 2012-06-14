@@ -44,6 +44,9 @@ from music21 import converter
 from music21 import analysis
 from music21 import stream
 from music21 import note # confirmed requirement
+from os.path import exists as pathExists # confirmed requirement
+from music21.converter import ConverterException # confirmed requirement
+from music21.converter import ConverterFileException # confirmed requirement
 # TODO: Quadruple-fun check that these are all that's required.
 
 ## TODO: Change all the classes to "new-type" (by making them inherit from object)
@@ -1152,7 +1155,12 @@ def analyzeThis( pathname, verbosity = 'concise' ):
    if isinstance( pathname, str ):
       ## get the score
       print( "Importing score to music21." )
-      theScore = converter.parse( pathname )
+      try:
+         theScore = converter.parse( pathname )
+      except ConverterException:
+         raise
+      except ConverterFileException:
+         raise
       ## "chordify" the score
       print( "Chordifying the score." )
       theChords = theScore.chordify()
@@ -1164,7 +1172,7 @@ def analyzeThis( pathname, verbosity = 'concise' ):
    elif isinstance( pathname, stream.Part ):
       theChords = pathname
    else:
-      raise InvalidInputError( "analyzeThis(): input must be str, Score, or Part; received " + str(type(pathname)) )
+      raise NonsensicalInputError( "analyzeThis(): input must be str, Score, or Part; received " + str(type(pathname)) )
    
    ## Remove ties because, if we're using the "lyric" property,
    ## MusicXML-->LilyPond won't allow two annotations for chords with tied notes.
@@ -1200,15 +1208,146 @@ def analyzeThis( pathname, verbosity = 'concise' ):
 
 
 
+# Class: HarrisonHarmonySettings ----------------------------------------------
+class HarrisonHarmonySettings:
+   # An internal class that holds settings for stuff.
+   # 
+   # _chordLabelVerbosity = 'concise' or 'verbose' that will be given to
+   #        labelThisChord()
+   def __init__( self, chordLabelVerbosity='concise' ):
+      self._chordLabelVerbosity = chordLabelVerbosity
+   
+   def parsePropertySet( self, propertyStr ):
+      # Parses 'propertyStr' and sets the specified property to the specified
+      # value. Might later raise an exception if the property doesn't exist or
+      # if the value is invalid.
+      # 
+      # Examples:
+      # a.parsePropertySet( 'chordLabelVerbosity concise' )
+      # a.parsePropertySet( 'set chordLabelVerbosity concise' )
+      
+      # if the str starts with "set " then remove that
+      if len(propertyStr) < 4:
+         pass # panic
+      elif 'set ' == propertyStr[:4]:
+         propertyStr = propertyStr[4:]
+      
+      # check to make sure there's a property and a value
+      spaceIndex = propertyStr.find(' ')
+      if -1 == spaceIndex:
+         pass #panic
+      
+      # now match the property
+      if 'chordLabelVerbosity' == propertyStr[:spaceIndex]:
+         self._chordLabelVerbosity = propertyStr[spaceIndex+1:]
+      # unrecognized property
+      else:
+         pass #panic
+   
+   def parsePropertyGet( self, propertyStr ):
+      # Parses 'propertyStr' and returns the value of the specified property.
+      # Might later raise an exception if the property doesn't exist.
+      # 
+      # Examples:
+      # a.parsePropertyGet( 'chordLabelVerbosity' )
+      # a.parsePropertyGet( 'get chordLabelVerbosity' )
+      
+      # if the str starts with "get " then remove that
+      if len(propertyStr) < 4:
+         pass # panic
+      elif 'get ' == propertyStr[:4]:
+         propertyStr = propertyStr[4:]
+      
+      # now match the property
+      if 'chordLabelVerbosity' == propertyStr:
+         return self._chordLabelVerbosity
+      # unrecognized property
+      else:
+         pass #panic
+# End Class: HarrisonHarmonySettings ------------------------------------------
+
+
+
 # "main" function --------------------------------------------------------------
-# TODO: this obviously needs some input-checking!
 # TODO: write the GPL-specified blurb here, and implemenet the commands, as specified at the end of the licence
 if __name__ == '__main__':
    print( "harrisonHarmony" )
    print( "===============" )
-   print( "Please input the path to the score you wish to analyze." )
-   print( "Fair warning: input is not verified at all, so don't do anything stupid..." )
-   path = raw_input( "Path: " )
-   print( "Loading " + path )
-   analyzeThis( path )
+   print( "For a list of commands, type \"help\"," )
+   print( "or input the filename of a score to analyze." )
+   
+   mySettings = HarrisonHarmonySettings()
+   exitProgram = False
+   
+   # See which command they wanted
+   while False == exitProgram:
+      userSays = raw_input( "hH @: " )
+      # help
+      if 'help' == userSays:
+         print( "\nList of Commands:" )
+         print( "-----------------" )
+         print( "- 'exit' or 'quit' to exit or quit the program" )
+         print( "- 'set' to set an option (see 'set help' for more information)" )
+         print( "- 'get' to get the setting of an option (see 'get help')" )
+         print( "" )
+      elif 'exit' == userSays or 'quit' == userSays:
+         print( "" )
+         exitProgram = True
+      # multi-word commands
+      elif 0 < userSays.find(' '):
+         if 'set' == userSays[:userSays.find(' ')]:
+            if 'set help' == userSays:
+               pass # print set help
+            else:
+               mySettings.parsePropertySet( userSays )
+         elif 'get' == userSays[:userSays.find(' ')]:
+            if 'get help' == userSays:
+               pass # print get help
+            else:
+               val = mySettings.parsePropertyGet( userSays )
+               print( val )
+      else:
+         if pathExists( userSays ):
+            print( "Loading " + userSays + " for analysis." )
+            try:
+               analyzeThis( userSays )
+            except ConverterException as e:
+               print( "--> musc21 Error: " + str(e) )
+            except ConverterFileException as e:
+               print( "--> musc21 Error: " + str(e) )
+            except NonsensicalInputError as e:
+               print( "--> Error from analyzeThis(): " + str(e) )
+         else:
+            print( "File doesn't seem to exist (" + userSays + ")" )
 # End "main" function ----------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
