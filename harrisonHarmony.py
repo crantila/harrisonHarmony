@@ -1371,6 +1371,11 @@ class HarrisonHarmonySettings:
 if __name__ == '__main__':
    print( "harrisonHarmony" )
    print( "===============" )
+   print( "harrisonHarmony  Copyright (C) 2012 Christopher Antila" )
+   print( "This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'." )
+   print( "This is free software, and you are welcome to redistribute it" )
+   print( "under certain conditions; type `show c' for details." )
+   print( "====================================================" )
    print( "For a list of commands, type \"help\"," )
    print( "or input the filename of a score to analyze." )
    
