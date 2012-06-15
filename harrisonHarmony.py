@@ -70,8 +70,8 @@ from music21.converter import ConverterFileException # confirmed requirement
 #-------------------------------------------------------------------------------
 class NonsensicalInputError( Exception ):
    '''
-   An error to throw when receiving nonsensical input that would otherwise
-   cause undesirable behaviour but not likely crash the program.
+   The error that I'm using for harrisonHarmony. This should potentially be
+   replaced with more useful errors.
    '''
    def __init__( self, val ):
       self.value = val
@@ -83,7 +83,6 @@ class NonsensicalInputError( Exception ):
 
 #-------------------------------------------------------------------------------
 def chromaticScaleDegree( tonicKey, unknownPitch ):
-   # NOTE: unit tests written
    '''
    Given a :class:`~music21.key.Key` and :class:`~music21.pitch.Pitch` or
    :class:`~music21.note.Note`, returns a :class:str that represents the
@@ -103,8 +102,6 @@ def chromaticScaleDegree( tonicKey, unknownPitch ):
    '##4'
    '''
    
-   # TODO: See if this could be more elegant.
-   
    # If there's an octave specified in unknownPitch, it causes problems, but
    # I'm not sure why. Even so, this will get rid of the octave number.
    unknownPitch = pitch.Pitch( unknownPitch.name )
@@ -119,8 +116,11 @@ def chromaticScaleDegree( tonicKey, unknownPitch ):
    #    dd-2 and ascending direction
    #    descending direction
    #    d-2 and 0 direction
-   if ( ( 'dd-2' == medialInt.directedName ) and ( 1 == medialInt.direction ) or ( -1 == medialInt.direction ) or ( ( 0 == medialInt.direction ) and ( 'd-2' == medialInt.directedName ) ) ):
-      medialInt = interval.notesToInterval( tonicPitch, interval.transposePitch( unknownPitch, interval.Interval( 'P8' ) ) )
+   if ( ( 'dd-2' == medialInt.directedName ) and ( 1 == medialInt.direction ) \
+      or ( -1 == medialInt.direction ) or ( ( 0 == medialInt.direction ) and \
+      ( 'd-2' == medialInt.directedName ) ) ):
+      medialInt = interval.notesToInterval( tonicPitch, \
+         interval.transposePitch( unknownPitch, interval.Interval( 'P8' ) ) )
    
    # now figure out the degree!
    mInt = medialInt.name # this is the name of the interval
@@ -161,11 +161,11 @@ def chromaticScaleDegree( tonicKey, unknownPitch ):
 
 #-------------------------------------------------------------------------------
 class HarmonicFunction( object ):
-   # NOTE: unit tests written
    '''
-   Holds four objects, representing the three harmonic functions and an
-   "unknown' function for cases where we are unsure.
+   Represents the three harmonic functions and an "unknown" function, for cases
+   when we aren't (yet) sure of harmonic function.
    
+   Contents:
    - HarmonicFunction.Subdominant
    
    - HarmonicFunction.Tonic
@@ -216,11 +216,11 @@ class HarmonicFunction( object ):
 
 #-------------------------------------------------------------------------------
 class FunctionalRole( object ):
-   # NOTE: unit tests written
    '''
-   Holds four objects representing the three functional roles and "unknown"
-   for when we are unsure of the functional role.
+   Represents the three functional roles and an "unknown" role for when we
+   aren't (yet) sure of the functional role.
    
+   Contents:
    - FunctionalRole.Base
    
    - FunctionalRole.Agent
@@ -275,11 +275,12 @@ class FunctionalRole( object ):
 
 #-------------------------------------------------------------------------------
 class RelativeVoicePosition( object ):
-   # NOTE: unit tests written
    '''
-   Holds four objects representing possibilities for the position of a voice
-   relative to other voices.
+   Represents the position of a voice relative to the other voices in a
+   simultaneity. The "Solo" position is not yet implemented, because it would
+   conceivably be treated always as "Lowest."
    
+   Contents:
    - RelativeVoicePosition.Lowest
    - RelativeVoicePosition.Middle
    - RelativeVoicePosition.Highest
@@ -330,20 +331,19 @@ class RelativeVoicePosition( object ):
 
 #-------------------------------------------------------------------------------
 class ConditionForFunction( object ):
-   # NOTE: unit tests written
    '''
    Instantiable class that holds information about what is required for a
    possible harmonic function and functional role to be the correct choice for
    a HarmonicFunctionalNote.
    
    Also holds three contingencies:
-   - ConditionforFunction.IsLowest : when a function is certain (as agents)
+   - ConditionforFunction.IsGuaranteed : when a function is certain (as agents)
    
-   - ConditionforFunction.IsLowestVoice : whether another note is in the
-   lowest voice
+   - ConditionforFunction.IsLowestVoice : when this note depends on another
+   note being in the lowest voice.
    
-   - ConditionforFunction.IsPresent : whether another specific scale degree
-   or HarmonicFunctionalNote is present
+   - ConditionforFunction.IsPresent : when this note depends on another note
+   being in the simultaneity.
    '''
    
    ## Static (non-)Variables
@@ -364,17 +364,17 @@ class ConditionForFunction( object ):
       >>> from harrisonHarmony import *
       >>> from music21 import key
       >>> ConditionForFunction( ConditionForFunction.IsGuaranteed, '' )
-      <harrisonHarmony.ConditionForFunction instance at 0x???????>
+      <harrisonHarmony.ConditionForFunction guaranteed>
       >>> ConditionForFunction( ConditionForFunction.IsLowestVoice, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Base, '1' ) )
-      <harrisonHarmony.ConditionForFunction instance at 0x???????>
+      <harrisonHarmony.ConditionForFunction true if lowest voice is Tba>
       >>> ConditionForFunction( ConditionForFunction.IsPresent, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Agent, '3' ) )
-      <harrisonHarmony.ConditionForFunction instance at 0x???????>
+      <harrisonHarmony.ConditionForFunction true in presence of Tag>
       '''
       self._contingentOn = condition
       self._dependsOnThis = harFuncNote
    
    def __repr__( self ):
-        return "<harrisonHarmony.ConditionForFunction %s>" % self.__str__()
+        return "<ConditionForFunction %s>" % self.__str__()
 
    def __str__( self ):
       if self.IsGuaranteed == self._contingentOn:
@@ -403,24 +403,24 @@ class ConditionForFunction( object ):
       >>> from music21 import key
       >>> a = ConditionForFunction( ConditionForFunction.IsLowestVoice, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Base, '1' ) )
       >>> a.getDependency()
-      <HarmonicFunctionalNote instance at 0x???????>
+      <HarmonicFunctionalNote ^1 as Tonic base in C>
       '''
       return self._dependsOnThis
    
    def equal( self, other ):
       '''
-      Returns True if the two ConditionForFunction objects are equal,
-      otherwise False. Tests both the contingency and dependency.
+      Returns True if the two ConditionForFunction objects have the same
+      contingency and dependency.
       
       >>> from harrisonHarmony import *
       >>> from music21 import key
       >>> a = ConditionForFunction( ConditionForFunction.IsLowestVoice, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Base, '1' ) )
       >>> b = ConditionForFunction( ConditionForFunction.IsLowestVoice, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Base, '1' ) )
       >>> a.equal( b )
-      1
+      True
       >>> b = ConditionForFunction( ConditionForFunction.IsLowestVoice, HarmonicFunctionalNote( key.Key( 'C' ), HarmonicFunction.Tonic, FunctionalRole.Agent, '-3' ) )
       >>> a.equal( b )
-      0
+      False
       '''
       if ( self._contingentOn == ConditionForFunction.IsGuaranteed ):
          if ( other._contingentOn == ConditionForFunction.IsGuaranteed ):
@@ -446,8 +446,9 @@ class ConditionForFunction( object ):
 #-------------------------------------------------------------------------------
 class HarmonicFunctionalNote( object ):
    '''
-   Instantiable class to describe a note that has harmonic function. In the
-   future, this class will extend :class:`music21.note.Note`
+   Instantiable class that describes a note with harmonic function.
+   
+   As in all classes and methods of harrisonHarmony, the key's mode is ignored.
    '''
    
    ## Instance Variables
@@ -461,13 +462,15 @@ class HarmonicFunctionalNote( object ):
    def __init__( self, theKey, theFunction, theRole, theDegree ):
       '''
       Given a :class:`music21.key.Key`, a :class:`harrisonHarmony.HarmonicFunction`,
-      a :class:`harrisonHarmony.FunctionalRole`, and a scale degrees, produces
+      a :class:`harrisonHarmony.FunctionalRole`, and a scale degree, produces
       the corresponding :class:`HarmonicFunctionalNote`.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
       >>> HarmonicFunctionalNote( key.Key( 'D-' ), HarmonicFunction.Subdominant, FunctionalRole.Associate, '1' )
       <HarmonicFunctionalNote ^1 as Subdominant associate in D->
+      >>> HarmonicFunctionalNote( key.Key( 'f#' ), HarmonicFunction.Dominant, FunctionalRole.Agent, '-7' )
+      <HarmonicFunctionalNote ^-7 as Dominant agent in F#>
       '''
       self._key = theKey
       self._function = theFunction
@@ -485,13 +488,13 @@ class HarmonicFunctionalNote( object ):
    
    #----------------------------------------------------------------------------
    def __str__( self ):
-      # str created in the __init__() function
+      # str was created in the __init__() function
       return self._stringRep
    
    #----------------------------------------------------------------------------
    def getKey( self ):
       '''
-      Returns the :class:`music21.key.Key` of this instance.
+      Returns the :class:`music21.key.Key` of this :class:`this HarmonicFunctionalNote`.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
@@ -504,7 +507,7 @@ class HarmonicFunctionalNote( object ):
    #----------------------------------------------------------------------------
    def getFunction( self ):
       '''
-      Returns the HarmonicFunction of this instance.
+      Returns the HarmonicFunction of this :class:`this HarmonicFunctionalNote`.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
@@ -517,7 +520,7 @@ class HarmonicFunctionalNote( object ):
    #----------------------------------------------------------------------------
    def getRole( self ):
       '''
-      Returns the FunctionalRole of this instance.
+      Returns the FunctionalRole of this :class:`this HarmonicFunctionalNote`.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
@@ -530,7 +533,8 @@ class HarmonicFunctionalNote( object ):
    #----------------------------------------------------------------------------
    def getDegree( self ):
       '''
-      Returns the str representing the scale degree of this instance.
+      Returns the str representing the scale degree of this
+      :class:`this HarmonicFunctionalNote`.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
@@ -568,8 +572,8 @@ class HarmonicFunctionalNote( object ):
    #----------------------------------------------------------------------------
    def equal( self, other ):
       '''
-      Returns True if the two HarmonicFunctionalNote objects are semantically
-      equivalent, or False if they are not.
+      Returns True if the two :class:`this HarmonicFunctionalNote` instances
+      are semantically equivalent, or False if they are not.
       
       >>> from music21 import key
       >>> from harrisonHarmony import *
@@ -598,8 +602,8 @@ class HarmonicFunctionalNote( object ):
 #-------------------------------------------------------------------------------
 class HarmonicFunctionalChord:
    '''
-   Instantiable class that represents a chord made of HarmonicFunctionalNote
-   objects in a known key.
+   Instantiable class that represents a chord made of
+   :class:`this HarmonicFunctionalNote` objects.
    '''
    
    ## Instance Variables
@@ -611,33 +615,35 @@ class HarmonicFunctionalChord:
    #----------------------------------------------------------------------------
    def __init__( self, bassFunction, otherFunctions = [], theKey = None ):
       '''
-      Given a HarmonicFunctionalNote and a list of other HarmonicFunctionalNote
-      objects, produces the corresponding HarmonicFunctionalChord.
+      Given a :class:`this HarmonicFunctionalNote` and a list of other
+      :class:`this HarmonicFunctionalNote` objects, produces the corresponding
+      :class:`HarmonicFunctionalChord`.
       
       The first argument is taken as the lowest voice, and the second argument
       as a list, from lowest to highest, of the rest of the voices. The
       second argument is optional, for situations where only one voice is present.
       
+      No methods of :class:`HarmonicFunctionalChord` will attempt to sort
+      the voices from lowest to highest, in case there is a voice-crossing
+      in this particular chord.
+      
       At least for now, the key is understood as the key of the lowest voice.
-      You may also provide a :class:`music21.key.Key` as the third argument
-      for situations where the prevailing key is not represented in the lowest
-      voice.
+      You may also provide a :class:`music21.key.Key` as the third argument,
+      for situations where the prevailing key does not match that of the
+      lowest voice.
       
       >>> from harrisonHarmony import *
       >>> T = HarmonicFunction.Tonic
       >>> ag = FunctionalRole.Agent
       >>> Tag = HarmonicFunctionalNote( key.Key( 'C' ), T, ag, '3' )
       >>> HarmonicFunctionalChord( Tag )
-      0x???????>
+      <HarmonicFunctionalChord T(3)>
       >>> ba = FunctionalRole.Base
-      >>> as = FunctionalRole.Associate
+      >>> ass = FunctionalRole.Associate
       >>> Tba = HarmonicFunctionalNote( key.Key( 'C' ), T, ba, '1' )
-      >>> Tas = HarmonicFunctionalNote( key.Key( 'C' ), T, as, '5' )
+      >>> Tas = HarmonicFunctionalNote( key.Key( 'C' ), T, ass, '5' )
       >>> HarmonicFunctionalChord( Tba, [Tag,Tas,Tba] )
-      0x???????>
-      >>> # Subdominant tonicization?
-      >>> HarmonicFunctionalChord( Tba, [Tag,Tas,Tba], key.Key( 'G' ) )
-      0x???????>
+      <HarmonicFunctionalChord T(1)>
       '''
       if None == theKey:
          # take the bass note's key
@@ -648,37 +654,6 @@ class HarmonicFunctionalChord:
       self._bFn = bassFunction
       self._oFns = otherFunctions
       self._label = self.__makeMyLabel()
-      
-      # verify the objects are the right type, then assign
-      # theKey
-      #if isinstance( theKey, key.Key ):
-         #self.key = theKey
-      #elif None == theKey:
-         #pass # we'll assign after error-checking bassFunction
-      #else:
-         #raise InvalidInputError( "HarmonicFunctionalChord(): Optional third constructor argument must be a music21.key.Key; received " + str(type(theKey)) )
-      # bassFunction
-      #if isinstance( bassFunction, HarmonicFunctionalNote ):
-         #self.bFn = bassFunction
-      #else:
-         #raise InvalidInputError( "HarmonicFunctionalChord(): First constructor argument must be a mumt621.HarmonicFunctionalNote; received " + str(type(bassFunction)) )
-      # if theKey wasn't given, we'll assign it now from the bassFunction
-      #if None == theKey:
-         #self.key = bassFunction.getKey()
-      ## otherFunctions
-      #self.oFns = []
-      #if isinstance( otherFunctions, list ):
-         #for oFn in otherFunctions:
-            #if isinstance( oFn, HarmonicFunctionalNote ):
-               #self.oFns.append( oFn )
-            #else:
-               #raise InvalidInputError( "HarmonicFunctionalChord(): Second constructor argument must be a list of mumt621.HarmonicFunctionalNote; received a " + str(type(oFn)) )
-      #else:
-         #raise InvalidInputError( "HarmonicFunctionalChord(): Second constructor argument must be a list of mumt621.HarmonicFunctionalNote; received " + str(type(otherFunctions)) )
-      # get the label for this note
-      #self._label = self.__makeMyLabel()
-      #
-   
    #----------------------------------------------------------------------------
    def __repr__( self ):
         return "<HarmonicFunctionalChord %s>" % self.__str__()
@@ -728,8 +703,8 @@ class HarmonicFunctionalChord:
    #----------------------------------------------------------------------------
    def getKey( self ):
       '''
-      Returns the :class:`music21.key.Key` of the lowest voice, or the key
-      that was provided on initialization.
+      Returns the :class:`music21.key.Key` that was provided on initialization,
+      or the Key of the lowest voice.
       
       >>> from harrisonHarmony import *
       >>> T = HarmonicFunction.Tonic
@@ -752,6 +727,18 @@ class HarmonicFunctionalChord:
    def getFunctionalNotes( self ):
       '''
       Returns a List of all HarmonicFunctionalNote objects in the chord.
+      
+      >>> from harrisonHarmony import *
+      >>> T = HarmonicFunction.Tonic
+      >>> ba = FunctionalRole.Base
+      >>> ag = FunctionalRole.Agent
+      >>> as = FunctionalRole.Associate
+      >>> Tag = HarmonicFunctionalNote( key.Key( 'C' ), T, ag, '3' )
+      >>> Tba = HarmonicFunctionalNote( key.Key( 'C' ), T, ba, '1' )
+      >>> Tas = HarmonicFunctionalNote( key.Key( 'C' ), T, as, '5' )
+      >>> a = HarmonicFunctionalChord( Tba, [Tag,Tas,Tba] )
+      >>> a.getFunctionalNotes()
+      [<HarmonicFunctionalNote ^1 as Tonic base in C>, <HarmonicFunctionalNote ^3 as Tonic agent in C>, <HarmonicFunctionalNote ^5 as Tonic associate in C>, <HarmonicFunctionalNote ^1 as Tonic base in C>]
       '''
       return [self._bFn] + self._oFns
    
@@ -759,6 +746,18 @@ class HarmonicFunctionalChord:
    def getBassFunctionalNote( self ):
       '''
       Returns a List of the HarmonicFunctionalNote that is the lowest voice.
+      
+      >>> from harrisonHarmony import *
+      >>> T = HarmonicFunction.Tonic
+      >>> ba = FunctionalRole.Base
+      >>> ag = FunctionalRole.Agent
+      >>> as = FunctionalRole.Associate
+      >>> Tag = HarmonicFunctionalNote( key.Key( 'C' ), T, ag, '3' )
+      >>> Tba = HarmonicFunctionalNote( key.Key( 'C' ), T, ba, '1' )
+      >>> Tas = HarmonicFunctionalNote( key.Key( 'C' ), T, as, '5' )
+      >>> a = HarmonicFunctionalChord( Tba, [Tag,Tas,Tba] )
+      >>> a.getFunctionalNotes()
+      <HarmonicFunctionalNote ^1 as Tonic base in C>
       '''
       return self._bFn
    
@@ -766,6 +765,18 @@ class HarmonicFunctionalChord:
    def getOtherFunctionalNotes( self ):
       '''
       Returns a List of all HarmonicFunctionalNote objects in upper voices.
+      
+      >>> from harrisonHarmony import *
+      >>> T = HarmonicFunction.Tonic
+      >>> ba = FunctionalRole.Base
+      >>> ag = FunctionalRole.Agent
+      >>> as = FunctionalRole.Associate
+      >>> Tag = HarmonicFunctionalNote( key.Key( 'C' ), T, ag, '3' )
+      >>> Tba = HarmonicFunctionalNote( key.Key( 'C' ), T, ba, '1' )
+      >>> Tas = HarmonicFunctionalNote( key.Key( 'C' ), T, as, '5' )
+      >>> a = HarmonicFunctionalChord( Tba, [Tag,Tas,Tba] )
+      >>> a.getFunctionalNotes()
+      [<HarmonicFunctionalNote ^3 as Tonic agent in C>, <HarmonicFunctionalNote ^5 as Tonic associate in C>, <HarmonicFunctionalNote ^1 as Tonic base in C>]
       '''
       return self._oFns
    
@@ -810,7 +821,6 @@ class HarmonicFunctionalChord:
       >>> a.getVerboseLabel()
       'C:Tba,C:Tag,C:Tas,C:Tba'
       '''
-      # TODO: test this
       post = self._bFn.getLabel()
       for member in self._oFns:
          post += "," + member.getLabel()
@@ -863,7 +873,7 @@ class HarmonicFunctionalChord:
          return True
       else:
          return False
-# end Class HarmonicFunctionalChord
+# end Class HarmonicFunctionalChord -------------------------------------------
 
 
 
@@ -888,10 +898,9 @@ def possibleFunctionsFromScaleDegree( theKey, scaleDegree, position ):
    >>> from music21 import key
    >>> Etonic = key.Key( 'E' ) # major or minor, same thing
    >>> a = possibleFunctionsFromScaleDegree( Etonic, '1', RelativeVoicePosition.Lowest )
-   [[<HarmonicFunctionalNote E major Tonic Base '1'>, <ConditionForFunction IsGuaranteed>]]
-   
-   TODO: finish those tests
-   And so on... I didn't finish writing those tests because I haven't serialized them yet.
+   [[<HarmonicFunctionalNote ^1 as Tonic base in E>, <ConditionForFunction guaranteed>]]
+   >>> a = possibleFunctionsFromScaleDegree( Etonic, '1', RelativeVoicePosition.Middle )
+   [[<HarmonicFunctionalNote ^1 as Tonic base in E>, <ConditionForFunction true in presence of ^3 as Tonic agent in E>], [<HarmonicFunctionalNote ^1 as Tonic base in E>, <ConditionForFunction true in presence of ^-3 as Tonic agent in E>], [<HarmonicFunctionalNote ^1 as Subdominant associate in E>, <ConditionForFunction true in presence of ^6 as Subdominant agent in E>], [<HarmonicFunctionalNote ^1 as Subdominant associate in E>, <harrisonHarmony.ConditionForFunction true in presence of ^-6 as Subdominant agent in E>], [<HarmonicFunctionalNote ^1 as Subdominant associate in E>, <ConditionForFunction true if lowest voice is ^4 as Subdominant base in E>]]
    '''
    
    post = [] # holds what we'll return
@@ -972,7 +981,11 @@ def reconcilePossibleFunctions( functions ):
    voice, the last element is always the highest voice, and all other elements
    are middle voices.
    
-   Output takes the form of a :class:`HarmonicFunctionalChord`.
+   In the future, this function will automatically determine the lowest note
+   of a chord, and will also somehow send notice when there are multiple correct
+   possibilities for the function of a particular note.
+   
+   Output (currently) takes the form of a :class:`HarmonicFunctionalChord`.
    
    >>> from harrisonHarmony import *
    >>> from music21 import key
@@ -982,12 +995,12 @@ def reconcilePossibleFunctions( functions ):
    >>> c = possibleFunctionsFromScaleDegree( FStonic, '1', RelativeVoicePosition.Middle )
    >>> d = possibleFunctionsFromScaleDegree( FStonic, '3', RelativeVoicePosition.Highest )
    >>> reconcilePossibleFunctions( [a, b, c, d] )
-   HarmonicFunctionalChord( [base, associate, base, agent] )
+   <HarmonicFunctionalChord T(1)>
    '''
    
-   ## TODO: contemplate dynamically determining which is the lowest/highest voice
+   ## TODO: automatically determine lowest (and highest) notes
    ## TODO: Have a more elegant way to get "unknown" functions.
-   ## TODO: What happens when one note has multiple simultaneous functions?
+   ## TODO: What happens when one note has multiple possible functions?
    ## TODO: Doesn't play nicely with applied chords.
    ## TODO: more efficient implementations probably exist
 
@@ -1136,17 +1149,21 @@ def labelThisChord( whatKey, harmony, verbosity = 'concise' ):
 
 
 #-------------------------------------------------------------------------------
-def analyzeThis( pathname, theSettings ):
+def analyzeThis( pathname, theSettings=None ):
    '''
    Given the path to a music21-supported score, imports the score, performs a
-   harmonic-functional analysis, annotates the score, and displays it with show().
-   
-   The second argument is a HarrisonHarmonySettings object.
+   harmonic-functional analysis, annotates the score, and displays it with the
+   default show().
    '''
    
    # TODO: parallelization: we could do .chordify() and .getSolution() (for key-finding)
    # simultaneously, and (for as long as we're only doing 'vertical' analysis) we could
    # also analyze all the chords simultaneously.
+   
+   # Ensure there's a settings object. If we didn't get one as an argument,
+   # we'll just use the default.
+   if None == theSettings:
+      theSettings = HarrisonHarmonySettings
    
    theScore = theChords = None
    # See what input we have...
@@ -1205,6 +1222,7 @@ def analyzeThis( pathname, theSettings ):
          tryThisIndex -= 1
    
    # Parse and label the chords.
+   # TODO: remove the code duplication here
    for measure in theChords:
       if isinstance( measure, chord.Chord ):
          # find the label
