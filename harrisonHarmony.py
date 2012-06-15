@@ -1211,12 +1211,34 @@ def analyzeThis( pathname, theSettings ):
          theLabel = labelThisChord( whatKey, measure, theSettings.parsePropertyGet( 'chordLabelVerbosity' ) )
          # if needed, put label on the actual score
          if False == theSettings.parsePropertyGet( 'annotateChordifiedScore' ):
-            measureNumber = theChords.number
+            # NOTE: this is the same algorithm as just below, except here:
+            #    measureOffset = theChords.offset
+            #    offsetOfChord = measure.offset
+            measureOffset = theChords.offset
             offsetOfChord = measure.offset
             try:
-               theScore[indexOfBassPart].measure( measureNumber ).getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+               # Sometimes, we get more than one thing with the same offset,
+               # like if there is an Instrument at the beginning of the Part.
+               # Usually this will just stop after 0.
+               i = 0
+               annotated = False
+               while not annotated:
+                  # thisOne will be set to the the i-th element at the offset
+                  # of our target measure in the real score
+                  thisOne = theScore[indexOfBassPart].getElementsByOffset( measureOffset )[i]
+                  # If the i-th element is a Measure, we can find the
+                  # Chord in it, and anootate it.
+                  if isinstance( thisOne, stream.Measure ):
+                     # find the chord at the proper offset
+                     thisOne.getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+                     annotated = True
+                  elif i > 10:
+                     annotated = True
+                  else:
+                     i += 1
             except stream.StreamException as e:
-               print( "analyzeThis(): Couldn't annotate m." + str(measureNumber) + ", offset " + str(offsetOfChord) )
+               print( "analyzeThis(): Couldn't annotate measure with offset " + str(measureOffset) + ", chord offset " + str(offsetOfChord) )
+               print( "   " + str(e) )
          else: # otherwise label goes on the chordified score
             measure.lyric = theLabel
       elif isinstance( measure, stream.Measure ):
@@ -1226,12 +1248,34 @@ def analyzeThis( pathname, theSettings ):
                theLabel = labelThisChord( whatKey, harmony, theSettings.parsePropertyGet( 'chordLabelVerbosity' ) )
                # if needed, put label on the actual score
                if False == theSettings.parsePropertyGet( 'annotateChordifiedScore' ):
-                  measureNumber = measure.number
+                  # NOTE: this is the same algorithm as just below, except here:
+                  #    measureOffset = measure.offset
+                  #    offsetOfChord = harmony.offset
+                  measureOffset = measure.offset
                   offsetOfChord = harmony.offset
                   try:
-                     theScore[indexOfBassPart].measure( measureNumber ).getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+                     # Sometimes, we get more than one thing with the same offset,
+                     # like if there is an Instrument at the beginning of the Part.
+                     # Usually this will just stop after 0.
+                     i = 0
+                     annotated = False
+                     while not annotated:
+                        # thisOne will be set to the the i-th element at the offset
+                        # of our target measure in the real score
+                        thisOne = theScore[indexOfBassPart].getElementsByOffset( measureOffset )[i]
+                        # If the i-th element is a Measure, we can find the
+                        # Chord in it, and anootate it.
+                        if isinstance( thisOne, stream.Measure ):
+                           # find the chord at the proper offset
+                           thisOne.getElementsByOffset( offsetOfChord )[0].lyric = theLabel
+                           annotated = True
+                        elif i > 10:
+                           annotated = True
+                        else:
+                           i += 1
                   except stream.StreamException as e:
-                     print( "analyzeThis(): Couldn't annotate m." + str(measureNumber) + ", offset " + str(offsetOfChord) )
+                     print( "analyzeThis(): Couldn't annotate measure with offset " + str(measureOffset) + ", chord offset " + str(offsetOfChord) )
+                     print( "   " + str(e) )
                else: # otherwise label goes on the chordified score
                   harmony.lyric = theLabel
    #
